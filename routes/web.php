@@ -6,4 +6,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [PostsController::class, 'index']);
 Route::get('post/', [PostsController::class, 'index'])->name('post.index');
 Route::get('post/create', [PostsController::class, 'create'])->name('post.create');
+Route::post('post/', [PostsController::class, 'store'])->name('post.store');
  

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Illuminate\Support\Facades\Storage;
 
 class PostsController extends Controller
 {
@@ -42,7 +43,20 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $post = new Post();
+        $post -> title = $request -> title;
+        $post -> short_title = strlen($post -> title) > 30 ? mb_substr($post -> title, 0, 30) . '...' : $post -> title;
+        $post -> descr = $request -> descr;
+        $post -> author_id = rand(1, 10);
+
+        if ($request->file('img')) {
+            $path = Storage::putFile('public', $request->file('img'));
+            $url = Storage::url($path);
+            $post -> img =  $url;
+        } 
+
+        $post->save();
+        return redirect() ->route('post.index')->with('success', 'Пост успешно создан');
     }
 
     /**

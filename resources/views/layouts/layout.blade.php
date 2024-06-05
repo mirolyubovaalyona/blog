@@ -8,6 +8,14 @@
 </head>
 <body>
     <a href="{{route('post.create')}}">Создать пост</a>
+
+    @if (session('success'))
+    <?php
+     $msg = session('success');
+    echo '<script>alert("'.$msg.'")</script>'; 
+    ?> 
+    @endif
+    
     @yield('content')
 </body>
 </html>
