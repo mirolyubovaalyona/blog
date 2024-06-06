@@ -31,7 +31,7 @@ class PostsController extends Controller
                 ->where('title',  'like', '%' . $request->search.'%'  )
                 ->orWhere('descr', 'like', '%' . $request->search. '%'  )
                 ->orWhere('name', 'like', '%' . $request->search.'%'  )
-                ->orderBy('posts.created_at')
+                ->orderByDesc('posts.created_at')
                 ->paginate(4);
             return view('posts.index', compact('posts'));
         }
@@ -39,7 +39,7 @@ class PostsController extends Controller
         #пагинация по 4 поста на странице
         $posts  = Post::join('users', 'posts.author_id', '=', 'users.id')
                 ->select($selectColumns)
-                ->orderBy('posts.created_at')
+                ->orderByDesc('posts.created_at')
                 ->paginate(4);
         return view('posts.index', compact('posts'));
     }
@@ -81,6 +81,7 @@ class PostsController extends Controller
         $postColumns = Schema::getColumnListing('posts');
         $userColumns = Schema::getColumnListing('users');
         $postColumns = array_diff($postColumns, ['id']);
+        $userColumns = array_diff($userColumns, ['created_at']);
         $selectColumns = array_merge( ['posts.id as post_id'], array_map(function($col) {
                 return 'posts.' . $col;
             }, $postColumns), array_map(function($col) {
@@ -140,6 +141,8 @@ class PostsController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $post  = Post::find($id);
+        $post -> delete();
+        return redirect() ->route('post.index')->with('success', 'Пост успешно удалён');
     }
 }
