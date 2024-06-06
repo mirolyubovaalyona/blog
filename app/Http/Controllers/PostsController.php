@@ -99,7 +99,20 @@ class PostsController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $postColumns = Schema::getColumnListing('posts');
+        $userColumns = Schema::getColumnListing('users');
+        $postColumns = array_diff($postColumns, ['id']);
+        $selectColumns = array_merge( ['posts.id as post_id'], array_map(function($col) {
+                return 'posts.' . $col;
+            }, $postColumns), array_map(function($col) {
+                return 'users.' . $col;
+            }, $userColumns)
+        );
+        $post  = Post::join('users', 'posts.author_id', '=', 'users.id')
+            ->select($selectColumns)
+            ->find($id);
+       
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -107,7 +120,19 @@ class PostsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $post  = Post::find($id);
+        $post -> title = $request ->title;
+        $post -> short_title = strlen($post -> title) > 30 ? mb_substr($post -> title, 0, 30) . '...' : $post -> title;
+        $post -> descr = $request -> descr;
+        if ($request->file('img')) {
+            $path = Storage::putFile('public', $request->file('img'));
+            $url = Storage::url($path);
+            $post -> img =  $url;
+        } 
+
+        $post->update();
+        $id = $post->id;
+        return redirect() ->route('post.show', compact('id'))->with('success', 'Пост успешно отредактирован');
     }
 
     /**
