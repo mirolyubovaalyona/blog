@@ -19,11 +19,11 @@
 
     @foreach ($posts as $post)
         <div>
-        <h3>{{$post->short_title}}</h3>
-        <div>{{$post->descr}}</div>
-        <img src="{{$post->img ??  asset('img/no-image.png') }}">
-        <div>{{$post->name}}</div>
-        <a href=""> Посмотреть пост </a>
+            <h3>{{$post->short_title}}</h3>
+            <div>{{$post->descr}}</div>
+            <img src="{{$post->img ??  asset('img/no-image.png') }}">
+            <div>{{$post->name}}</div>
+            <a href="{{route('post.show', ['id' => $post -> post_id])}}"> Посмотреть пост </a>
         </div>
     @endforeach
 
