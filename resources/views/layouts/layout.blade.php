@@ -9,11 +9,18 @@
 <body>
     <a href="{{route('post.create')}}">Создать пост</a>
 
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            <?php
+            echo '<script>alert("'.$error.'")</script>'; 
+            ?>  
+        @endforeach
+    @endif
+
     @if (session('success'))
-    <?php
-     $msg = session('success');
-    echo '<script>alert("'.$msg.'")</script>'; 
-    ?> 
+        <?php
+        echo '<script>alert("'.session('success').'")</script>'; 
+        ?> 
     @endif
     
     @yield('content')
